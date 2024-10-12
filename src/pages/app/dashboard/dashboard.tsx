@@ -46,7 +46,7 @@ export function Dashboard(){
             <div className="fixed bottom-0 left-0 right-0 flex justify-end px-8 py-4">
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button className="bg-custom-gray-200 dark:bg-custom-gray-600 flex gap-3 text-base p-6">
+                        <Button className="bg-custom-gray-500 dark:bg-custom-gray-100 flex gap-3 text-base p-6">
                             <Plus className="h-5 w-5" />
                             Nova Refeição
                         </Button>

@@ -16,14 +16,41 @@ export function DialogDailyDiet(){
 
     const handleClick = (id: string) => (event: MouseEvent<HTMLDivElement>) => {
         const radioItem = document.getElementById(id) as HTMLInputElement;
+        const clickedDiv = event.currentTarget as HTMLDivElement;
+        const otherRadioId = id === 'r1' ? 'r2' : 'r1';
+        const otherDiv = clickedDiv.parentElement?.querySelector(`[for="${otherRadioId}"]`)?.parentElement as HTMLDivElement;
+        
         if (radioItem) {
           radioItem.click();
+        }
+
+        if(id === 'r1'){
+            clickedDiv.classList.remove('bg-custom-gray-100')
+            clickedDiv.classList.remove('dark:bg-custom-gray-500')
+            clickedDiv.classList.add('bg-custom-green-200')
+            clickedDiv.classList.add('dark:bg-custom-green-300')
+
+            otherDiv.classList.remove('bg-custom-red-100')
+            otherDiv.classList.remove('dark:bg-custom-red-400')
+            otherDiv.classList.add('bg-custom-gray-100')
+            otherDiv.classList.add('dark:bg-custom-gray-500')
+        }
+        else if(id === 'r2'){
+            clickedDiv.classList.remove('bg-custom-gray-100')
+            clickedDiv.classList.remove('dark:bg-custom-gray-500')
+            clickedDiv.classList.add('bg-custom-red-100')
+            clickedDiv.classList.add('dark:bg-custom-red-400')
+
+            otherDiv.classList.remove('bg-custom-green-200')
+            otherDiv.classList.remove('dark:bg-custom-green-300')
+            otherDiv.classList.add('bg-custom-gray-100')
+            otherDiv.classList.add('dark:bg-custom-gray-500')
         }
     };
 
     return (
         <DialogContent className="sm:max-w-[425px] p-0">
-            <DialogHeader className="bg-custom-gray-500 dark:bg-custom-gray-200 rounded-t-lg p-5">
+            <DialogHeader className="bg-custom-gray-200 dark:bg-custom-gray-500 rounded-t-lg p-5">
                 <DialogTitle className="text-center">Nova refeição</DialogTitle>
             </DialogHeader>
             <div className="px-5 pb-5">
@@ -91,15 +118,15 @@ export function DialogDailyDiet(){
                         Está dentro da dieta?
                         </Label>
                         <div>
-                            <RadioGroup defaultValue="comfortable" className="grid grid-cols-2">
-                            <div onClick={handleClick('r1')} className="flex items-center justify-center space-x-2 py-4 rounded-md bg-custom-gray-600 dark:bg-custom-gray-200">
+                            <RadioGroup className="grid grid-cols-2">
+                            <div onClick={handleClick('r1')} className="flex items-center justify-center space-x-2 py-4 rounded-md bg-custom-gray-100 dark:bg-custom-gray-500">
                                 <RadioGroupItem className="hidden" value="true" id="r1" />
-                                <div className="rounded-full w-3 h-3 bg-custom-green-300 dark:bg-custom-green-400 !m-0"></div>
+                                <div className="rounded-full w-3 h-3 bg-custom-green-400 dark:bg-custom-green-600 !m-0"></div>
                                 <Label htmlFor="r1">Sim</Label>
                             </div>
-                            <div onClick={handleClick('r2')} className="flex items-center justify-center space-x-2 py-4 rounded-md bg-custom-gray-600 dark:bg-custom-gray-200">
+                            <div onClick={handleClick('r2')} className="flex items-center justify-center space-x-2 py-4 rounded-md bg-custom-gray-100 dark:bg-custom-gray-500">
                                 <RadioGroupItem className="hidden" value="false" id="r2" />
-                                <div className="rounded-full w-3 h-3 bg-custom-red-300 dark:bg-custom-red-400 !m-0"></div>
+                                <div className="rounded-full w-3 h-3 bg-custom-red-500 dark:bg-custom-red-600 !m-0"></div>
                                 <Label htmlFor="r2">Não</Label>
                             </div>
                             </RadioGroup>
@@ -108,7 +135,7 @@ export function DialogDailyDiet(){
                 </div>
 
                 <div className="flex justify-end mt-6">
-                    <Button className="bg-custom-gray-200 dark:bg-custom-gray-600" type="submit">Cadastrar refeição</Button>
+                    <Button className="bg-custom-gray-500 dark:bg-custom-gray-100" type="submit">Cadastrar refeição</Button>
                 </div>
             </div>
         </DialogContent>

@@ -1,9 +1,65 @@
+import { loginUser } from "@/api/login-user";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { z } from "zod";
+import { AxiosError } from 'axios';
+
+const signInForm = z.object({
+    email: z.string(),
+    password: z.string()
+})
+
+type SignInForm = z.infer<typeof signInForm>
 
 export function SignIn(){
+    const navigate = useNavigate()
+    const { register, handleSubmit } = useForm<SignInForm>()
+
+    const { mutateAsync: loginUserFn } = useMutation({
+        mutationFn: loginUser,
+    })
+
+    async function handleSignIn(data: SignInForm) {
+        try{
+            const response = await loginUserFn({
+                email: data.email, 
+                password: data.password
+            })
+
+            const { userId } = response;
+
+            document.cookie = `userId=${userId}; path=/; secure; samesite=strict;`;
+
+            console.log('Usuário autenticado com sucesso!');
+
+            navigate(`/`)
+
+        } catch (error) {
+
+            if(error instanceof AxiosError){
+                if(error.response?.data.message == 'User not found'){
+                    toast.error('Usuário inválido, tente novamente!')
+                    return
+                }
+    
+                if(error.response?.data.message == 'Invalid credentials'){
+                    toast.error('Senha inválida, tente novamente!')
+                    return
+                }
+            }
+            
+            if(error){
+                toast.error('Falha ao autenticar, tente novamente!')
+                console.error(error)
+            }
+        }
+    }
+
     return (
         <div>
             <div className="p-8">
@@ -22,14 +78,14 @@ export function SignIn(){
                     Acompanhe suas refeições diariamente!
                     </p>
                 </div>
-                <form className="space-y-4">
+                <form onSubmit={handleSubmit(handleSignIn)} className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="email">E-mail</Label>
-                        <Input id="email" type="email" />
+                        <Input id="email" type="email" {...register("email")} />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="email">Senha</Label>
-                        <Input id="email" type="email" />
+                        <Label htmlFor="password">Senha</Label>
+                        <Input id="password" type="password" {...register("password")} />
                     </div>
 
                     <Button type="submit" className="w-full">

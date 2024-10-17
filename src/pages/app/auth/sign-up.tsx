@@ -1,9 +1,49 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { z } from "zod";
+import { useForm } from "react-hook-form"
+import { useMutation } from "@tanstack/react-query";
+import { registerUser } from "@/api/register-user";
+import { toast } from "sonner";
+
+const signUpForm = z.object({
+    name: z.string(),
+    email: z.string().email(),
+    password: z.string().min(6)
+})
+
+type SignUpForm = z.infer<typeof signUpForm>
 
 export function SignUp(){
+    const navigate = useNavigate()
+    const { register, handleSubmit } = useForm<SignUpForm>()
+
+    const { mutateAsync: registerUserFn } = useMutation({
+        mutationFn: registerUser,
+    })
+
+    async function handleSignUp(data: SignUpForm) {
+        try{
+            await registerUserFn({
+                name: data.name,
+                email: data.email,
+                password: data.password
+            })
+
+            toast.success('Usuario cadastrado com sucesso!', {
+                action: {
+                    label: 'Login',
+                    onClick: () => navigate(`/sign-in`),
+                }
+            })
+            
+        }catch {
+            toast.error('Erro ao cadastrar usuário!')
+        }
+    }
+
     return (
         <div>
             <div className="p-8">
@@ -22,18 +62,18 @@ export function SignUp(){
                     Seja um usuário e acompanhe suas refeições diariamente!
                     </p>
                 </div>
-                <form className="space-y-4">
+                <form onSubmit={handleSubmit(handleSignUp)} className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="name">Nome</Label>
-                        <Input id="name" type="name" />
+                        <Input id="name" type="name" {...register('name')} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="email">E-mail</Label>
-                        <Input id="email" type="email" />
+                        <Input id="email" type="email" {...register('email')} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="password">Senha</Label>
-                        <Input id="password" type="password" />
+                        <Input id="password" type="password" {...register('password')} />
                     </div>
 
                     <Button type="submit" className="w-full">

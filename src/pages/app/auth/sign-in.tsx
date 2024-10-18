@@ -31,9 +31,9 @@ export function SignIn(){
                 password: data.password
             })
 
-            const { userId } = response;
+            const { sessionId } = response;
 
-            document.cookie = `userId=${userId}; path=/; secure; samesite=strict;`;
+            document.cookie = `sessionId=${sessionId}; path=/; secure; samesite=strict;`;
 
             console.log('Usuário autenticado com sucesso!');
 

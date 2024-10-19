@@ -1,6 +1,6 @@
 import { Logo } from "@/components/logo";
 import { Outlet } from "react-router-dom";
-import Hero from "@/../public/daily-diet-.svg"
+import Hero from "/daily-diet.svg"
 
 export function AuthLayout(){
     return (

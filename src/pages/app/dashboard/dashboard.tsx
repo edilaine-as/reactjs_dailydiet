@@ -8,20 +8,76 @@ import { DietOnDietSequenceCard } from "./metrics/diet-on-diet-sequence-card";
 import { DietRegisterCard } from "./metrics/diet-register-card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Diet, getDietsUser } from "@/api/get-diets-user";
 
-const data = [
-    {
-        date: "05.10.24",
-        itemData: [
-            { hour: "08:00", meal: "Panqueca de banana", isOnDiet: true },
-            { hour: "12:00", meal: "Filé de frango", isOnDiet: true },
-            { hour: "15:00", meal: "Mamão com aveia", isOnDiet: true },
-            { hour: "20:00", meal: "X-tudo", isOnDiet: false },
-        ]
-    },
-]
+interface ItemData {
+    hour: string;
+    meal: string;
+    isOnDiet: boolean;
+}
+
+interface GroupedData {
+    date: string;
+    itemData: ItemData[];
+}
 
 export function Dashboard(){
+    const { data: dietsUser } = useQuery({
+        queryFn: getDietsUser,
+        queryKey: ['diet']
+    });
+
+    const transformData = (dataArray: Diet[]): GroupedData[] => {
+        const groupedData: GroupedData[] = [];
+        
+        dataArray.map(data => {
+            const date = new Date(data.date);
+            const formattedDate = date.toLocaleDateString("pt-BR");
+
+            const hours = date.getUTCHours().toString().padStart(2, '0');
+            const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+
+            const newDateEntry = {
+                date: formattedDate,
+                itemData: []
+            };
+
+            if(groupedData.length == 0){
+                groupedData.push(newDateEntry)
+
+                groupedData[0].itemData.push({
+                    hour: `${hours}:${minutes}`,
+                    meal: data.name,
+                    isOnDiet: data.is_on_diet
+                })
+            }else{
+                const existingEntry = groupedData.find(item => item.date == formattedDate);
+            
+                if(existingEntry){
+                    existingEntry.itemData.push({
+                        hour: `${hours}:${minutes}`,
+                        meal: data.name,
+                        isOnDiet: data.is_on_diet
+                    })
+                }else {
+                    groupedData.push(newDateEntry)
+
+                    groupedData[0].itemData.push({
+                        hour: `${hours}:${minutes}`,
+                        meal: data.name,
+                        isOnDiet: data.is_on_diet
+                    })
+                }
+            }
+        });
+
+        return groupedData
+    };
+
+
+    const transformedData = dietsUser ? transformData(dietsUser.diet) : [];
+
     return (
         <div>
             <div className="flex flex-col gap-4">
@@ -37,9 +93,11 @@ export function Dashboard(){
 
                 <h2 className="text-3xl font-bold tracking-tight">Refeições</h2>
                 <div className="grid grid-cols-4 gap-4">
-                    {data.map((item, index) => (
+                {Array.isArray(transformedData) && transformedData.length > 0 ? 
+                    transformedData.map((item, index) => (
                         <DailyDietRegister key={index} date={item.date} itemData={item.itemData} />
-                    ))}
+                    )) 
+                : ''}
                 </div>
             </div>
 

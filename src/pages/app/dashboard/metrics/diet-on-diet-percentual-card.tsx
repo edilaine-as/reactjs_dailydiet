@@ -9,7 +9,7 @@ export function DietOnDietPercentualCard(){
         staleTime: 1000 * 60 * 5, // 5 minutos
     });
 
-    const percent = metricsUser?.totalDiets ? (metricsUser?.totalDietsOnDiet * 100) / metricsUser?.totalDiets : 0;
+    const percent = metricsUser?.totalDiets ? Math.round((metricsUser?.totalDietsOnDiet * 100) / metricsUser?.totalDiets) : 0;
 
     return (
         <Card className="bg-custom-green-200 dark:bg-custom-green-300 border-none shadow-none">

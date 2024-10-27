@@ -14,6 +14,7 @@ export function DailyDietRegister({date, itemData}: DailyDietProps){
                 {itemData.map((item, index) => (
                     <ItemDailyDietRegister
                         key={index}
+                        id={item.id}
                         hour={item.hour}
                         meal={item.meal}
                         isOnDiet={item.isOnDiet}

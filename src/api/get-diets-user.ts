@@ -6,7 +6,7 @@ export interface Diet {
     description: string;
     is_on_diet: boolean;
     user_id: string;
-    date: number;
+    date: string;
 }
 
 export interface GetDietsUserResponse {

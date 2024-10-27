@@ -1,4 +1,6 @@
+import { GetDietsUserResponse, getDietUser } from "@/api/get-diet-user";
 import { registerDiet } from "@/api/register-diet";
+import { updateDiet } from "@/api/update-diet";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -7,14 +9,19 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { RadioGroup } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ptBR } from 'date-fns/locale';
 import { CalendarIcon } from "lucide-react";
-import { MouseEvent, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+
+interface DietDialogProps {
+    dietId: string;
+    open: boolean;
+}
 
 const dialogDailyDietForm = z.object({
     name: z.string(),
@@ -26,72 +33,90 @@ const dialogDailyDietForm = z.object({
 
 type DialogDailyDietForm = z.infer<typeof dialogDailyDietForm>
 
-export function DialogDailyDiet(){
+export function DialogDailyDiet({ dietId, open }: DietDialogProps){
     const queryClient = useQueryClient();
 
     const [date, setDate] = useState<Date>()
-
-    const handleClick = (id: string) => (event: MouseEvent<HTMLDivElement>) => {
-        const radioItem = document.getElementById(id) as HTMLInputElement;
-        const clickedDiv = event.currentTarget as HTMLDivElement;
-        const otherRadioId = id === 'r1' ? 'r2' : 'r1';
-        const otherDiv = clickedDiv.parentElement?.querySelector(`[for="${otherRadioId}"]`)?.parentElement as HTMLDivElement;
-        
-        if (radioItem) {
-          radioItem.click();
-        }
-
-        if(id === 'r1'){
-            clickedDiv.classList.remove('bg-custom-gray-100')
-            clickedDiv.classList.remove('dark:bg-custom-gray-500')
-            clickedDiv.classList.add('bg-custom-green-200')
-            clickedDiv.classList.add('dark:bg-custom-green-300')
-
-            otherDiv.classList.remove('bg-custom-red-100')
-            otherDiv.classList.remove('dark:bg-custom-red-400')
-            otherDiv.classList.add('bg-custom-gray-100')
-            otherDiv.classList.add('dark:bg-custom-gray-500')
-        }
-        else if(id === 'r2'){
-            clickedDiv.classList.remove('bg-custom-gray-100')
-            clickedDiv.classList.remove('dark:bg-custom-gray-500')
-            clickedDiv.classList.add('bg-custom-red-100')
-            clickedDiv.classList.add('dark:bg-custom-red-400')
-
-            otherDiv.classList.remove('bg-custom-green-200')
-            otherDiv.classList.remove('dark:bg-custom-green-300')
-            otherDiv.classList.add('bg-custom-gray-100')
-            otherDiv.classList.add('dark:bg-custom-gray-500')
-        }
-    };
-
+    const [isOnDiet, setIsOnDiet] = useState<boolean | null>(null);
     const { setValue, register, handleSubmit } = useForm<DialogDailyDietForm>()
 
+    const { data: dietDetails } = useQuery<GetDietsUserResponse>({
+        queryFn: () => getDietUser({dietId}),
+        queryKey: ['dietDetails', dietId],
+        enabled: open,
+    });
+
+    useEffect(() => {
+        if(dietDetails?.diet){
+            setValue("name", dietDetails.diet?.name);
+            setValue("description", dietDetails.diet?.description);
+
+            if(dietDetails.diet?.date){
+                let date = new Date(dietDetails.diet.date);
+                const hours = date.getUTCHours().toString().padStart(2, '0');
+                const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+                setValue("hour", `${hours}:${minutes}`);
+
+                setDate(date); // componente Calendar
+                setValue('date', date.toISOString().split('T')[0]);
+            }
+
+            setIsOnDiet(dietDetails.diet.is_on_diet? true : false)
+            setValue("is_on_diet", dietDetails.diet.is_on_diet? true : false);
+        }
+    }, [dietDetails, setValue]);
+
+    const handleClick = (value: boolean) => () => {
+        setIsOnDiet(value);
+        setValue('is_on_diet', value);
+    };
+
     async function handleRegisterDiet(data: DialogDailyDietForm) {
-        try{
-            const date = data.date + 'T' + data.hour + ':00.000Z'
-            const isOnDiet = JSON.parse(String(data.is_on_diet));
-
-            await registerDiet({
-                name: data.name,
-                description: data.description,
-                date: date,
-                isOnDiet: isOnDiet
-            })
-
-            queryClient.invalidateQueries<any>(['metrics']); // invalida minha consulta de metrics
-
-            toast.success('Refeição criada com sucesso!')
-        } catch (error) {
-            if(error){
-                toast.error('Falha ao criar refeição, tente novamente!')
-                console.error(error)
+        const date = data.date + 'T' + data.hour + ':00.000Z'
+        const isOnDiet = JSON.parse(String(data.is_on_diet));
+        
+        if(dietId === ""){
+            try{
+                await registerDiet({
+                    name: data.name,
+                    description: data.description,
+                    date: date,
+                    isOnDiet: isOnDiet
+                })
+                
+                toast.success('Refeição criada com sucesso!')
+                queryClient.invalidateQueries<any>(['metrics']); // invalida minha consulta de metrics
+            } catch (error) {
+                if(error){
+                    toast.error('Falha ao criar refeição, tente novamente!')
+                    console.error(error)
+                }
+            }
+        }else{
+            try{
+                await updateDiet(
+                {
+                    dietId: dietId
+                }, 
+                {
+                    name: data.name,
+                    description: data.description,
+                    date: date,
+                    isOnDiet: isOnDiet
+                })
+                toast.success('Refeição atualizada com sucesso!')
+                queryClient.invalidateQueries<any>(['metrics']); // invalida minha consulta de metrics
+            }catch (error) {
+                if(error){
+                    toast.error('Falha ao atualizar refeição, tente novamente!')
+                    console.error(error)
+                }
             }
         }
     }
 
     return (
-        <DialogContent className="sm:max-w-[425px] p-0">
+        <DialogContent className="sm:max-w-[425px] p-0" aria-describedby={undefined}>
             <DialogHeader className="bg-custom-gray-200 dark:bg-custom-gray-500 rounded-t-lg p-5">
                 <DialogTitle className="text-center">Nova refeição</DialogTitle>
             </DialogHeader>
@@ -166,24 +191,24 @@ export function DialogDailyDiet(){
                         Está dentro da dieta?
                         </Label>
                         <RadioGroup className="grid grid-cols-2">
-                            <div onClick={handleClick('r1')} className="flex items-center justify-center space-x-2 py-4 rounded-md bg-custom-gray-100 dark:bg-custom-gray-500">
+                            <div onClick={handleClick(true)} className={`flex items-center justify-center space-x-2 py-4 rounded-md ${isOnDiet === null? 'bg-custom-gray-100 dark:bg-custom-gray-500' : isOnDiet? 'bg-custom-green-200 dark:bg-custom-green-300' : 'bg-custom-gray-100 dark:bg-custom-gray-500'}`}>
                                 <input
                                     type="radio"
-                                    value="true"
-                                    id="r1"
-                                    {...register('is_on_diet')}
                                     className="hidden"
+                                    value="true"
+                                    checked={isOnDiet === true}
+                                    {...register('is_on_diet')}
                                 />
                                 <div className="rounded-full w-3 h-3 bg-custom-green-400 dark:bg-custom-green-600 !m-0"></div>
                                 <Label htmlFor="r1">Sim</Label>
                             </div>
-                            <div onClick={handleClick('r2')} className="flex items-center justify-center space-x-2 py-4 rounded-md bg-custom-gray-100 dark:bg-custom-gray-500">
+                            <div onClick={handleClick(false)} className={`flex items-center justify-center space-x-2 py-4 rounded-md  ${isOnDiet === null? 'bg-custom-gray-100 dark:bg-custom-gray-500' : !isOnDiet? 'bg-custom-red-100 dark:bg-custom-red-400' : 'bg-custom-gray-100 dark:bg-custom-gray-500'}`}>
                                 <input
                                     type="radio"
-                                    value="false"
-                                    id="r2"
-                                    {...register('is_on_diet')}
                                     className="hidden"
+                                    value="false"
+                                    checked={isOnDiet === false}
+                                    {...register('is_on_diet')}
                                 />
                                 <div className="rounded-full w-3 h-3 bg-custom-red-500 dark:bg-custom-red-600 !m-0"></div>
                                 <Label htmlFor="r2">Não</Label>

@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Diet, getDietsUser } from "@/api/get-diets-user";
 
 interface ItemData {
+    id: string;
     hour: string;
     meal: string;
     isOnDiet: boolean;
@@ -47,6 +48,7 @@ export function Dashboard(){
                 groupedData.push(newDateEntry)
 
                 groupedData[0].itemData.push({
+                    id: data.id,
                     hour: `${hours}:${minutes}`,
                     meal: data.name,
                     isOnDiet: data.is_on_diet
@@ -56,6 +58,7 @@ export function Dashboard(){
             
                 if(existingEntry){
                     existingEntry.itemData.push({
+                        id: data.id,
                         hour: `${hours}:${minutes}`,
                         meal: data.name,
                         isOnDiet: data.is_on_diet
@@ -63,11 +66,16 @@ export function Dashboard(){
                 }else {
                     groupedData.push(newDateEntry)
 
-                    groupedData[0].itemData.push({
-                        hour: `${hours}:${minutes}`,
-                        meal: data.name,
-                        isOnDiet: data.is_on_diet
-                    })
+                    const existingEntry = groupedData.find(item => item.date == formattedDate);
+
+                    if(existingEntry){
+                        existingEntry.itemData.push({
+                            id: data.id,
+                            hour: `${hours}:${minutes}`,
+                            meal: data.name,
+                            isOnDiet: data.is_on_diet
+                        })
+                    }
                 }
             }
         });
@@ -109,7 +117,7 @@ export function Dashboard(){
                             Nova Refeição
                         </Button>
                     </DialogTrigger>
-                    <DialogDailyDiet/>
+                    <DialogDailyDiet dietId="" open={false}/>
                 </Dialog>
             </div>
         </div>

@@ -30,7 +30,7 @@ export function ItemDailyDietRegister({id, hour, meal, isOnDiet}: ItemDailyDietR
                     {isOnDiet? <div className="rounded-full h-4 w-4 bg-custom-green-200 dark:bg-custom-green-300"></div> : <div className="rounded-full h-4 w-4 bg-custom-red-100 dark:bg-custom-red-400"></div>}
                 </div>
             </DialogTrigger>
-            <DialogDailyDiet dietId={id} open={isDetailsOpen}/>
+            <DialogDailyDiet dietId={id} open={isDetailsOpen} onOpenChange={setIsDetailsOpen}/>
         </Dialog>
 
     )

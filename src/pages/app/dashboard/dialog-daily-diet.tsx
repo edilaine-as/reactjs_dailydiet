@@ -21,6 +21,7 @@ import { z } from "zod";
 interface DietDialogProps {
     dietId: string;
     open: boolean;
+    onOpenChange: (open: boolean) => void;
 }
 
 const dialogDailyDietForm = z.object({
@@ -33,7 +34,7 @@ const dialogDailyDietForm = z.object({
 
 type DialogDailyDietForm = z.infer<typeof dialogDailyDietForm>
 
-export function DialogDailyDiet({ dietId, open }: DietDialogProps){
+export function DialogDailyDiet({ dietId, open, onOpenChange }: DietDialogProps){
     const queryClient = useQueryClient();
 
     const [date, setDate] = useState<Date>()
@@ -77,6 +78,7 @@ export function DialogDailyDiet({ dietId, open }: DietDialogProps){
             toast.success('Refeição criada com sucesso!')
             queryClient.invalidateQueries({queryKey: ['metrics']}); // invalida minha consulta de metrics
             queryClient.invalidateQueries({queryKey: ['diets']});
+            onOpenChange(false)
         },
         onError: (error) => {
             toast.error('Falha ao criar refeição, tente novamente!')
@@ -90,6 +92,7 @@ export function DialogDailyDiet({ dietId, open }: DietDialogProps){
             toast.success('Refeição atualizada com sucesso!')
             queryClient.invalidateQueries({queryKey: ['metrics']});
             queryClient.invalidateQueries({queryKey: ['diets']});
+            onOpenChange(false)
         }, 
         onError: (error) => {
             toast.error('Falha ao atualizar refeição, tente novamente!')

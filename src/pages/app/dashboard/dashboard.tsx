@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Diet, getDietsUser } from "@/api/get-diets-user";
+import { useState } from "react";
 
 interface ItemData {
     id: string;
@@ -24,6 +25,8 @@ interface GroupedData {
 }
 
 export function Dashboard(){
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+
     const { data: dietsUser } = useQuery({
         queryFn: getDietsUser,
         queryKey: ['diets']
@@ -110,14 +113,14 @@ export function Dashboard(){
             </div>
 
             <div className="fixed bottom-0 left-0 right-0 flex justify-end px-8 py-4">
-                <Dialog>
+                <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
                     <DialogTrigger asChild>
                         <Button className="bg-custom-gray-500 dark:bg-custom-gray-100 flex gap-3 text-base p-6">
                             <Plus className="h-5 w-5" />
                             Nova Refeição
                         </Button>
                     </DialogTrigger>
-                    <DialogDailyDiet dietId="" open={false}/>
+                    <DialogDailyDiet dietId="" open={isDetailsOpen} onOpenChange={setIsDetailsOpen}/>
                 </Dialog>
             </div>
         </div>

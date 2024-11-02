@@ -48,6 +48,7 @@ export function DialogUserSettings({ open, onOpenChange, user }: UserSettingsDia
         onSuccess: () => {
             toast.success('Usuário atualizado com sucesso!');
             queryClient.invalidateQueries({ queryKey: ['user'] });
+            onOpenChange(false)
         },
         onError: (error) => {
             toast.error('Falha ao atualizar usuário, tente novamente!');

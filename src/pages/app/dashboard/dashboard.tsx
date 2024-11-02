@@ -26,7 +26,7 @@ interface GroupedData {
 export function Dashboard(){
     const { data: dietsUser } = useQuery({
         queryFn: getDietsUser,
-        queryKey: ['diet']
+        queryKey: ['diets']
     });
 
     const transformData = (dataArray: Diet[]): GroupedData[] => {

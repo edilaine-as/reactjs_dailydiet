@@ -1,6 +1,6 @@
 import { GetDietsUserResponse, getDietUser } from "@/api/get-diet-user";
-import { registerDiet } from "@/api/register-diet";
-import { updateDiet } from "@/api/update-diet";
+import { registerDiet, RegisterDietParams } from "@/api/register-diet";
+import { updateDiet, UpdateDietParams } from "@/api/update-diet";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { RadioGroup } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ptBR } from 'date-fns/locale';
 import { CalendarIcon } from "lucide-react";
@@ -71,46 +71,58 @@ export function DialogDailyDiet({ dietId, open }: DietDialogProps){
         setValue('is_on_diet', value);
     };
 
+    const mutationRegisterDiet = useMutation<void, Error, RegisterDietParams>({
+        mutationFn: registerDiet,
+        onSuccess: () => {
+            toast.success('Refeição criada com sucesso!')
+            queryClient.invalidateQueries({queryKey: ['metrics']}); // invalida minha consulta de metrics
+            queryClient.invalidateQueries({queryKey: ['diets']});
+        },
+        onError: (error) => {
+            toast.error('Falha ao criar refeição, tente novamente!')
+            console.error(error)
+        }
+    })
+
+    const mutationUpdateDiet = useMutation<void, Error, UpdateDietParams>({
+        mutationFn: updateDiet,
+        onSuccess: () => {
+            toast.success('Refeição atualizada com sucesso!')
+            queryClient.invalidateQueries({queryKey: ['metrics']});
+            queryClient.invalidateQueries({queryKey: ['diets']});
+        }, 
+        onError: (error) => {
+            toast.error('Falha ao atualizar refeição, tente novamente!')
+            console.error(error)
+        }
+    })
+
     async function handleRegisterDiet(data: DialogDailyDietForm) {
         const date = data.date + 'T' + data.hour + ':00.000Z'
         const isOnDiet = JSON.parse(String(data.is_on_diet));
         
         if(dietId === ""){
             try{
-                await registerDiet({
+                await mutationRegisterDiet.mutateAsync({
                     name: data.name,
                     description: data.description,
                     date: date,
                     isOnDiet: isOnDiet
                 })
-                
-                toast.success('Refeição criada com sucesso!')
-                queryClient.invalidateQueries<any>(['metrics']); // invalida minha consulta de metrics
             } catch (error) {
-                if(error){
-                    toast.error('Falha ao criar refeição, tente novamente!')
-                    console.error(error)
-                }
+                console.error('Erro ao criar refeição:', error);
             }
         }else{
-            try{
-                await updateDiet(
-                {
-                    dietId: dietId
-                }, 
-                {
+            try {
+                await mutationUpdateDiet.mutateAsync({ 
+                    dietId: dietId,
                     name: data.name,
                     description: data.description,
                     date: date,
                     isOnDiet: isOnDiet
-                })
-                toast.success('Refeição atualizada com sucesso!')
-                queryClient.invalidateQueries<any>(['metrics']); // invalida minha consulta de metrics
-            }catch (error) {
-                if(error){
-                    toast.error('Falha ao atualizar refeição, tente novamente!')
-                    console.error(error)
-                }
+                });
+            } catch (error) {
+                console.error('Erro ao atualizar refeição:', error);
             }
         }
     }

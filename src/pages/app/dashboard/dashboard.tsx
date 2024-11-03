@@ -83,6 +83,18 @@ export function Dashboard(){
             }
         });
 
+        // Ordenação de datas
+        groupedData.sort((a, b) => {
+            const [dayA, monthA, yearA] = a.date.split('/').map(Number);
+            const [dayB, monthB, yearB] = b.date.split('/').map(Number);
+
+            const dateA = new Date(yearA, monthA - 1, dayA); // Mês - 1 pois os meses começam em 0
+            const dateB = new Date(yearB, monthB - 1, dayB);
+
+            return dateA.getTime() - dateB.getTime();
+        })
+        
+        // Ordenação de horário
         groupedData.forEach(group => {
             group.itemData.sort((a, b) => a.hour.localeCompare(b.hour))
         })

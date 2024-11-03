@@ -83,6 +83,10 @@ export function Dashboard(){
             }
         });
 
+        groupedData.forEach(group => {
+            group.itemData.sort((a, b) => a.hour.localeCompare(b.hour))
+        })
+
         return groupedData
     };
 

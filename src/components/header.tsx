@@ -5,7 +5,7 @@ import { NavLink } from "./nav-link";
 import { ThemeToggle } from "./theme/theme-toggle";
 import { Logo } from "./logo";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DialogUserSettings } from "@/pages/app/dashboard/dialog-user-settings";
 import { useNavigate } from "react-router-dom";
 import { getUser } from "@/api/get-user";
@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export function Header(){
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [image, setImage] = useState<string | ''>('');
     const navigate = useNavigate()
 
     const handleSignOut = () => {
@@ -27,6 +28,14 @@ export function Header(){
         queryFn: getUser,
         queryKey: ['user'],
     });
+
+    const uploadBasePath = '@/../images/users/';
+
+    useEffect(() => {
+        if (user?.user.avatar) {
+          setImage(`${uploadBasePath}${user.user.avatar}`);
+        }
+      }, [user?.user.avatar]);
 
     return(
         <div className="border-b">
@@ -45,7 +54,7 @@ export function Header(){
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Avatar>
-                                <AvatarImage src="" />
+                                <AvatarImage src={image} />
                                 <AvatarFallback>{user?.user.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                             </Avatar>
                         </DropdownMenuTrigger>

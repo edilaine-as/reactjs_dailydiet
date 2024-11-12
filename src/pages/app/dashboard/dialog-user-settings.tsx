@@ -1,5 +1,5 @@
 import { updateUser, UpdateUserParams } from "@/api/update-user";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AvatarUploader } from "@/components/avatar-uploader";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -26,7 +26,8 @@ interface UserSettingsDialogProps {
 
 const dialogDailyDietForm = z.object({
     name: z.string(),
-    email: z.string().email()
+    email: z.string().email(),
+    avatar: z.instanceof(File).optional(),
 })
 
 type DialogUserSettingsForm = z.infer<typeof dialogDailyDietForm>
@@ -65,7 +66,8 @@ export function DialogUserSettings({ open, onOpenChange, user }: UserSettingsDia
             await mutationUpdateUser.mutateAsync({ 
                 userId: user.id, 
                 name: data.name, 
-                email: data.email 
+                email: data.email,
+                avatar: data.avatar
             });
         } catch (error) {
             console.error('Erro ao atualizar usuário:', error);
@@ -90,11 +92,9 @@ export function DialogUserSettings({ open, onOpenChange, user }: UserSettingsDia
                                 <Input id="email" className="col-span-3 focus-visible:ring-0 focus-visible:ring-offset-0" {...register("email")} />
                             </div>
                         </div>
-                        <div>
-                            <Avatar className="size-32">
-                                <AvatarImage src="" />
-                                <AvatarFallback>{user?.name.substring(0, 2).toUpperCase()}</AvatarFallback>
-                            </Avatar>
+                        
+                        <div className="size-32">
+                            <AvatarUploader user={user} register={register} setValue={setValue}/>
                         </div>
                     </div>
 

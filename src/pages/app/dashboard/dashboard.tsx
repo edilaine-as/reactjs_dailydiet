@@ -110,7 +110,7 @@ export function Dashboard(){
             <div className="flex flex-col gap-4">
                 <h2 className="text-3xl font-bold tracking-tight">Estatísticas gerais</h2>
 
-                <div className="grid grid-cols-5 gap-4">
+                <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                     <DietOnDietPercentualCard/>
                     <DietOnDietSequenceCard/>
                     <DietRegisterCard/>
@@ -119,7 +119,7 @@ export function Dashboard(){
                 </div>
 
                 <h2 className="text-3xl font-bold tracking-tight">Refeições</h2>
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {Array.isArray(transformedData) && transformedData.length > 0 ? 
                     transformedData.map((item, index) => (
                         <DailyDietRegister key={index} date={item.date} itemData={item.itemData} />

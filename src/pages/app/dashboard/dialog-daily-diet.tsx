@@ -131,8 +131,8 @@ export function DialogDailyDiet({ dietId, open, onOpenChange }: DietDialogProps)
     }
 
     return (
-        <DialogContent className="sm:max-w-[425px] p-0" aria-describedby={undefined}>
-            <DialogHeader className="bg-custom-gray-200 dark:bg-custom-gray-500 rounded-t-lg p-5">
+        <DialogContent className="md:max-w-[425px] p-0" aria-describedby={undefined}>
+            <DialogHeader className="bg-custom-gray-200 dark:bg-custom-gray-500 rounded-t-lg p-5 max-h-[60px]">
                 <DialogTitle className="text-center">Nova refeição</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit(handleRegisterDiet)} className="px-5 pb-5">

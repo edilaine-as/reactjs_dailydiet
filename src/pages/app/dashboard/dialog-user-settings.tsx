@@ -81,8 +81,12 @@ export function DialogUserSettings({ open, onOpenChange, user }: UserSettingsDia
                     <DialogTitle className="text-center">Configurações</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(handleUpdateUser)} className="px-5 pb-5">
-                    <div className="flex justify-end gap-6">
-                        <div className="flex-1">
+                    <div className="md:flex justify-end gap-6">
+                        <div className="md:order-2 sm:order-1 size-32">
+                            <AvatarUploader user={user} register={register} setValue={setValue}/>
+                        </div>
+
+                        <div className="md:order-1 flex-1">
                             <div>
                                 <Label htmlFor="name">Nome</Label>
                                 <Input id="name" className="col-span-3 focus-visible:ring-0 focus-visible:ring-offset-0" {...register("name")} />
@@ -91,10 +95,6 @@ export function DialogUserSettings({ open, onOpenChange, user }: UserSettingsDia
                                 <Label htmlFor="email">Email</Label>
                                 <Input id="email" className="col-span-3 focus-visible:ring-0 focus-visible:ring-offset-0" {...register("email")} />
                             </div>
-                        </div>
-                        
-                        <div className="size-32">
-                            <AvatarUploader user={user} register={register} setValue={setValue}/>
                         </div>
                     </div>
 

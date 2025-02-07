@@ -1,4 +1,4 @@
-import { updateUser, UpdateUserParams } from "@/api/update-user";
+import { updateUser, type UpdateUserParams } from "@/api/update-user";
 import { AvatarUploader } from "@/components/avatar-uploader";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -77,7 +77,7 @@ export function DialogUserSettings({ open, onOpenChange, user }: UserSettingsDia
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[625px] p-0" aria-describedby={undefined}>
-                <DialogHeader className="bg-custom-gray-200 dark:bg-custom-gray-500 rounded-t-lg p-5">
+                <DialogHeader className="bg-custom-gray-200 dark:bg-custom-gray-500 rounded-t-lg p-5 max-h-[60px]">
                     <DialogTitle className="text-center">Configurações</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(handleUpdateUser)} className="px-5 pb-5">

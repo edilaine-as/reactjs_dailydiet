@@ -2,7 +2,7 @@ import { getMetricsUser } from "@/api/get-metrics-user";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 
-export function DietOnDietSequenceCard(){
+export function DietOnDietSequenceCard({ className = "" }){
     const { data: metricsUser } = useQuery({
         queryFn: getMetricsUser,
         queryKey: ['metrics'],
@@ -10,7 +10,7 @@ export function DietOnDietSequenceCard(){
     });
 
     return (
-        <Card className="bg-custom-gray-100 dark:bg-custom-gray-500 border-none shadow-none">
+        <Card className={`bg-custom-gray-100 dark:bg-custom-gray-500 border-none shadow-none ${className}`}>
             <CardHeader className="pb-1">
                 <CardTitle className="text-2xl text-center text-custom-gray-600 dark:text-white">{metricsUser?.bestOnDietSequence}</CardTitle>
             </CardHeader>

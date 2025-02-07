@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 import { AxiosError } from 'axios';
+import { Logo } from "@/components/logo";
 
 const signInForm = z.object({
     email: z.string(),
@@ -63,10 +64,13 @@ export function SignIn(){
     return (
         <div>
             <div className="p-8">
+                <div className="flex items-center gap-3 text-lg font-medium text-foreground absolute left-4 top-8 md:hidden">
+                    <Logo />
+                </div>
                 <Button variant={'ghost'} asChild className="absolute right-4 top-8">
-                <Link to="/sign-up" className="">
-                    Cadastrar
-                </Link>
+                    <Link to="/sign-up" className="">
+                        Cadastrar
+                    </Link>
                 </Button>
 
                 <div className="flex w-[320px] flex-col justify-center gap-6">

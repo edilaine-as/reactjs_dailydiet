@@ -9,7 +9,7 @@ import { DietRegisterCard } from "./metrics/diet-register-card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { Diet, getDietsUser } from "@/api/get-diets-user";
+import { type Diet, getDietsUser } from "@/api/get-diets-user";
 import { useState } from "react";
 
 interface ItemData {
@@ -105,17 +105,19 @@ export function Dashboard(){
 
     const transformedData = dietsUser ? transformData(dietsUser.diet) : [];
 
+    const [showDivs, setShowDivs] = useState(false);
+
     return (
         <div>
             <div className="flex flex-col gap-4">
                 <h2 className="text-3xl font-bold tracking-tight">Estatísticas gerais</h2>
 
                 <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                    <DietOnDietPercentualCard/>
-                    <DietOnDietSequenceCard/>
-                    <DietRegisterCard/>
-                    <DietOnDietCard />
-                    <DietOffDietCard/>
+                    <DietOnDietPercentualCard icon={!showDivs} />
+                    <DietOnDietSequenceCard className={`${!showDivs ? 'hidden' : ''}`}/>
+                    <DietRegisterCard className={`${!showDivs ? 'hidden' : ''}`}/>
+                    <DietOnDietCard className={`${!showDivs ? 'hidden' : ''}`}/>
+                    <DietOffDietCard className={`${!showDivs ? 'hidden' : ''}`}/>
                 </div>
 
                 <h2 className="text-3xl font-bold tracking-tight">Refeições</h2>

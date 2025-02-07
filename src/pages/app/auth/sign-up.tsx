@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form"
 import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "@/api/register-user";
 import { toast } from "sonner";
+import { Logo } from "@/components/logo";
 
 const signUpForm = z.object({
     name: z.string(),
@@ -47,10 +48,13 @@ export function SignUp(){
     return (
         <div>
             <div className="p-8">
+                <div className="flex items-center gap-3 text-lg font-medium text-foreground absolute left-4 top-8 md:hidden">
+                    <Logo />
+                </div>
                 <Button variant={'ghost'} asChild className="absolute right-4 top-8">
-                <Link to="/sign-in" className="">
-                    Login
-                </Link>
+                    <Link to="/sign-in" className="">
+                        Login
+                    </Link>
                 </Button>
 
                 <div className="flex w-[320px] flex-col justify-center gap-6">

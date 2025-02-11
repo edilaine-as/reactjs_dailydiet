@@ -15,8 +15,6 @@ export function DietOnDietPercentualCard({ className = "", icon = false }){
         staleTime: 1000 * 60 * 5, // 5 minutos
     });
 
-    const showDivs = icon
-
     const percent = metricsUser?.totalDiets ? Math.round((metricsUser?.totalDietsOnDiet * 100) / metricsUser?.totalDiets) : 0;
 
     return (
@@ -41,17 +39,19 @@ export function DietOnDietPercentualCard({ className = "", icon = false }){
                 </CardContent>
             </Card>
 
-            <DialogContent className="sm:max-w-[625px] h-full p-0" aria-describedby={undefined}>
-                <DialogHeader className="bg-custom-gray-200 dark:bg-custom-gray-500 p-5 max-h-[60px]">
-                    <DialogTitle className="text-center">Estatísticas gerais</DialogTitle>
-                </DialogHeader>
-                <div className="grid sm:grid-cols-1 px-5 pb-5 gap-5">
-                    <DietOnDietPercentualCard icon={!showDivs} />
-                    <DietOnDietSequenceCard className={`${!showDivs ? 'hidden' : ''}`}/>
-                    <DietRegisterCard className={`${!showDivs ? 'hidden' : ''}`}/>
-                    <div className={`${!showDivs ? 'hidden' : ''} flex gap-5`}>
-                        <DietOnDietCard />
-                        <DietOffDietCard />
+            <DialogContent className="flex content-start sm:max-w-[625px] h-full w-full p-0" aria-describedby={undefined}>
+                <div className="w-full">
+                    <DialogHeader className="bg-custom-gray-200 dark:bg-custom-gray-500 p-5 max-h-[60px] mb-5">
+                        <DialogTitle className="text-center">Estatísticas gerais</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid sm:grid-cols-1 px-5 pb-5 gap-5">
+                        <DietOnDietPercentualCard />
+                        <DietOnDietSequenceCard />
+                        <DietRegisterCard />
+                        <div className='flex gap-5'>
+                            <DietOnDietCard />
+                            <DietOffDietCard />
+                        </div>
                     </div>
                 </div>
                 

@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { type Diet, getDietsUser } from "@/api/get-diets-user";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ItemData {
     id: string;
@@ -106,6 +106,17 @@ export function Dashboard(){
     const transformedData = dietsUser ? transformData(dietsUser.diet) : [];
 
     const [showDivs, setShowDivs] = useState(false);
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia("(min-width: 768px)"); // md = 768px no Tailwind
+        
+        const handleResize = () => setShowDivs(mediaQuery.matches);
+
+        handleResize(); // Verifica no carregamento inicial
+        mediaQuery.addEventListener("change", handleResize);
+
+        return () => mediaQuery.removeEventListener("change", handleResize);
+    }, []);
 
     return (
         <div>

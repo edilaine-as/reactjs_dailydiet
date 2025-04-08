@@ -39,7 +39,7 @@ export function DietOnDietPercentualCard({ className = "", icon = false }){
                 </CardContent>
             </Card>
 
-            <DialogContent className="flex content-start sm:max-w-[625px] h-full w-full p-0" aria-describedby={undefined}>
+            <DialogContent className="flex content-start h-full w-full p-0" aria-describedby={undefined}>
                 <div className="w-full">
                     <DialogHeader className="bg-custom-gray-200 dark:bg-custom-gray-500 p-5 max-h-[60px] mb-5">
                         <DialogTitle className="text-center">Estatísticas gerais</DialogTitle>

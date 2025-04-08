@@ -1,6 +1,6 @@
 # Daily Diet
 
-[Leia em Português](#português) | [Read in English](#english)
+[Leia em Português](#português) | [Read in English](#english) | [Images](#images)
 
 ## English
 Daily Diet is a web application for managing your daily meals. With it, you can register meals, specify times, and track whether they are within your diet. Additionally, the system provides detailed metrics to help you monitor your progress.
@@ -108,3 +108,18 @@ Daily Diet é uma aplicação web para o gerenciamento das suas refeições diá
 Sinta-se à vontade para contribuir! Abra uma issue ou envie um pull request.
 ### 📄 Licença
 Este projeto está licenciado sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
+
+## Images
+
+### 💻 Desktop
+![Login Preview](./assets/login.jpg)
+![Home Preview](./assets/home.jpg)
+![Dialog Diet Preview](./assets/dialog-diet.jpg)
+![Dialog User Preview](./assets/dialog-user.jpg)
+
+### 📱 Mobile
+![Login Preview](./assets/mobile-login.jpg)
+![Home Preview](./assets/mobile-home.jpg)
+![Details Preview](./assets/mobile-details.jpg)
+![Dialog Diet Preview](./assets/mobile-dialog-diet.jpg)
+![Dialog User Preview](./assets/mobile-dialog-user.jpg)
